@@ -6,27 +6,6 @@ const taskList = document.getElementById('task-list');
 let savedTasks = JSON.parse(localStorage.getItem('tasks_v2')) || [];
 let currentFilter = 'all';
 
-function renderTasks() {
-  taskList.innerHTML = '';
-  const searchQuery = searchInput.value.toLowerCase();
-  savedTasks.forEach((task) => {
-    if (currentFilter === 'active' && task.completed) return;
-    if (currentFilter === 'completed' && !tack.completed) return;
-
-    if(!task.text.toLowerCase().includes(searchQuery)) return;
-
-    const li = document.createElement('li');
-    li.className = 'task-item';
-    if (task.completed) li.style.opacity = '0.5';
-    li.innerHTML = `
-      <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask($task.id})" style="margin-right: 10px; cursor:pointer;">
-      <span style="${task.completed ? 'task-decoration: line-through;' : ''}">${task.text}</span>
-      <button onclick="deleteTask($task.id})" style="backgroud: #ef4444; padding: 4px 8px; float: right; font-size: 11px;">Delete</button>
-    `;
-    taskList.appendChild(li);
-  });
-}
-
 function addTask() {
   const text = taskInput.value.trim();
   if (text === '') return alert('Task cannot be empty!');
@@ -41,6 +20,27 @@ function addTask() {
   taskInput.value = '';
 }
 
+function renderTasks() {
+  taskList.innerHTML = '';
+  const searchQuery = searchInput.value.toLowerCase();
+  savedTasks.forEach((task) => {
+    if (currentFilter === 'active' && task.completed) return;
+    if (currentFilter === 'completed' && !task.completed) return;
+
+    if(!task.text.toLowerCase().includes(searchQuery)) return;
+
+    const li = document.createElement('li');
+    li.className = 'task-item';
+    if (task.completed) li.style.opacity = '0.5';
+    li.innerHTML = `
+      <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})" style="margin-right: 10px; cursor:pointer;">
+      <span style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</span>
+      <button onclick="deleteTask(${task.id})" style="background: #ef4444; padding: 4px 8px; float: right; font-size: 11px;">Delete</button>
+    `;
+    taskList.appendChild(li);
+  });
+}
+
 window.toggleTask = function(id) {
   savedTasks = savedTasks.map(task => {
     if (task.id === id) {
@@ -51,7 +51,7 @@ window.toggleTask = function(id) {
   saveAndRefresh();
 }
 
-window.deleteTask = function(index) {
+window.deleteTask = function(id) {
   savedTasks = savedTasks.filter(task => task.id !== id);
   saveAndRefresh();
 }
