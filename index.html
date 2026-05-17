@@ -13,6 +13,14 @@
       <input type="text" id="task-input" placeholder="Enter a new task...">
       <button id="add-btn">Add Task</button>
     </div>
+    <div class="search-section" style="margin-bottom: 15px;">
+      <input type="text" id="search-input" placeholder="Search tasks..." style="width: 100%; box-sizing: border-box;">
+    </div>
+    <div class="filter-section" style="display: flex; gap: 10px; margin-bottom: 15px;">
+      <button onclick="setFilter('all')" style="flex: 1; background: #64748b; font-size: 12px; padding: 6px;">All</button>
+      <button onclick="setFilter('active')" style="flex=1; background: #64748b; font-size: 12px; padding: 6px;">Active</button>
+      <button onclick="setFilter('completed')" style="flex: 1; background: #64748b; font-size: 12px; padding: 6px;">Completed</button>
+    </div>
     <h3>My Tasks</h3>
     <ul id="task-list"></ul>
   </div>
