@@ -9,6 +9,9 @@
 <body>
   <div class="workspace-container">
     <h1>TaskForge Workspace</h1>
+    <div class="control-section" style="margin-bottom: 15px;">
+      <button id="undo-btn" style="width: 100%; background: #f59e0b; color: white;">Undo Last Last Action</button>
+    </div>
     <div class="input-section">
       <input type="text" id="task-input" placeholder="Enter a new task...">
       <button id="add-btn">Add Task</button>
@@ -24,6 +27,7 @@
     <h3>My Tasks</h3>
     <ul id="task-list"></ul>
   </div>
+  <div id="notification-container" style="position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px;"></div>
   <script src="script.js"></script>
 </body>
 </html>
