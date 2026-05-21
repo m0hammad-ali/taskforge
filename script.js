@@ -127,7 +127,6 @@ renderTasks();
 
 window.triggerBubbleSort = function() {
   if (savedTasks.length <= 1) return;
-  saveStateToStack();
   let n = savedTasks.length;
   let swapped;
 
@@ -171,7 +170,6 @@ function quickSortEngine(arr) {
 }
 window.triggerQuickSort = function() {
   if (savedTasks.length <= 1) return;
-  saveStateToStack();
   const startTime = performance.now();
 
   savedTasks = quickSortEngine(savedTasks);
