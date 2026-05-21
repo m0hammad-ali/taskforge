@@ -31,12 +31,12 @@ window.undoAction = function() {
 function enqueueNotification(message) {
   notificationQueue.push(message);
   if (!isProcessingQueue) {
-    processingQueue();
+    processQueue();
   }
 }
 
 function processQueue() {
-  if (notification.length === 0) {
+  if (notificationQueue.length === 0) {
     isProcessingQueue = false;
     return;
   }
@@ -49,7 +49,7 @@ function processQueue() {
   container.appendChild(toast);
   setTimeout(() => {
     toast.remove();
-    processingQueue();
+    processQueue();
   },2000);
 }
 
@@ -69,25 +69,6 @@ function addTask() {
   enqueueNotification("Task added: " + text);
 }
 
-function renderTasks() {
-  taskList.innerHTML = '';
-  const searchQuery = searchInput.value.toLowerCase();
-  savedTasks.forEach((task) => {
-    if (currentFilter === 'active' && task.completed) return;
-    if (currentFilter === 'completed' && !task.completed) return;
-    if(!task.text.toLowerCase().includes(searchQuery)) return;
-
-    const li = document.createElement('li');
-    li.className = 'task-item';
-    if (task.completed) li.style.opacity = '0.5';
-    li.innerHTML = `
-      <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})" style="margin-right: 10px; cursor:pointer;">
-      <span style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</span>
-      <button onclick="deleteTask(${task.id})" style="background: #ef4444; padding: 4px 8px; float: right; font-size: 11px;">Delete</button>
-    `;
-    taskList.appendChild(li);
-  });
-}
 
 window.toggleTask = function(id) {
   saveStateToStack();
@@ -113,6 +94,26 @@ window.setFilter = function(filterValue) {
   renderTasks();
 }
 
+function renderTasks() {
+  taskList.innerHTML = '';
+  const searchQuery = searchInput.value.toLowerCase();
+  savedTasks.forEach((task) => {
+    if (currentFilter === 'active' && task.completed) return;
+    if (currentFilter === 'completed' && !task.completed) return;
+    if(!task.text.toLowerCase().includes(searchQuery)) return;
+
+    const li = document.createElement('li');
+    li.className = 'task-item';
+    if (task.completed) li.style.opacity = '0.5';
+    li.innerHTML = `
+      <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})" style="margin-right: 10px; cursor:pointer;">
+      <span style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</span>
+      <button onclick="deleteTask(${task.id})" style="background: #ef4444; padding: 4px 8px; float: right; font-size: 11px;">Delete</button>
+    `;
+    taskList.appendChild(li);
+  });
+}
+
 function saveAndRefresh() {
   localStorage.setItem('tasks_v2', JSON.stringify(savedTasks));
   renderTasks();
@@ -123,3 +124,59 @@ undoBtn.addEventListener('click', undoAction);
 taskInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') addTask(); });
 searchInput.addEventListener('input', renderTasks);
 renderTasks();
+
+window.triggerBubbleSort = function() {
+  if (savedTasks.length <= 1) return;
+  saveStateToStack();
+  let n = savedTasks.length;
+  let swapped;
+
+  const startTime = performance.now();
+  do {
+    swapped = false;
+    for (let i = 0; i < n - 1; i++) {
+      if (savedTasks[i].text.length > savedTasks[i + 1].text.length) {
+        let temp = savedTasks[i];
+        savedTasks[i] = savedTasks[i + 1];
+        savedTasks[i + 1] = temp;
+        swapped = true;
+      }
+    }
+    n--;
+  } while (swapped);
+
+  const endTime = performance.now();
+  saveAndRefresh();
+  enqueueNotification(`Bubble Sorted in ${(endTime - startTime).toFixed(4)}ms!`);
+}
+function quickSortEngine(arr) {
+  if (arr.length <= 1) return arr;
+  const pivotIndex = Math.floor(arr.length / 2);
+  const pivot = arr[pivotIndex];
+
+  const left = [];
+  const right = [];
+  const equal = [];
+
+  for (let task of arr) {
+    if (task.text.length < pivot.text.length) {
+      left.push(task);
+    } else if (task.text.length > pivot.text.length) {
+      right.push(task);
+    } else {
+      equal.push(task);
+    }
+  }
+  return [...quickSortEngine(left), ...equal, ...quickSortEngine(right)];
+}
+window.triggerQuickSort = function() {
+  if (savedTasks.length <= 1) return;
+  saveStateToStack();
+  const startTime = performance.now();
+
+  savedTasks = quickSortEngine(savedTasks);
+
+  const endTime = performance.now();
+  saveAndRefresh();
+  enqueueNotification(`Quick Sorted in ${(endTime - startTime).toFixed(4)}ms!`);  
+}

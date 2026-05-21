@@ -24,6 +24,10 @@
       <button onclick="setFilter('active')" style="flex: 1; background: #64748b; font-size: 12px; padding: 6px;">Active</button>
       <button onclick="setFilter('completed')" style="flex: 1; background: #64748b; font-size: 12px; padding: 6px;">Completed</button>
     </div>
+    <div class="sort-section" style="display: flex; gap: 10px; margin-bottom: 15px;">
+      <button onclick="triggerBubbleSort()" style="flex: 1; background: #0ea5e9; font-size:11px; padding:6px;">Sort (Bubble Sort)</button>
+      <button onclick="triggerQuickSort()" style="flex: 1; background: #0ea5e9; font-size:11px; padding:6px;">Sort (Quick Sort)</button>
+    </div>
     <h3>My Tasks</h3>
     <ul id="task-list"></ul>
   </div>
